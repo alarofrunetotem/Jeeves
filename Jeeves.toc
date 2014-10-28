@@ -1,0 +1,27 @@
+## Interface: 60000
+## Title: Jeeves
+## Notes: Offers a quick way to wear just dropped eq
+## Notes-itIT: Ti propone di indossare gli oggetti che droppi
+## Author: Alar of Daggerspine
+## Version: 1.0.$Revision: 527 $
+## eMail: alar@aspide.it
+## URL: http://wow.aspide.it
+## RequiredDeps:
+## OptionalDeps: AlarArtRemover
+## DefaultState: Enabled
+## LoadOnDemand: 0
+## SavedVariables: dbATE,alarspells
+## X-ID: ATE
+## X-Database:dbATE
+## X-Revision: $Revision: 527 $
+## X-Category: Interface Enhancements
+## X-Embeds: Ace3 AlarArtRemover
+## X-Website: http://wow.aspide.it
+## X-License: LGPL v2.1
+## X-Donation: http://wow.aspide.it
+## X-eMail: alar@aspide.it
+## X-Date: $Date: 2014-10-13 18:07:34 +0200 (Mon, 13 Oct 2014) $
+## X-Embeds:
+embeds.xml
+localization.lua
+Jeeves.lua
