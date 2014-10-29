@@ -7,12 +7,12 @@
 ## eMail: alar@aspide.it
 ## URL: http://wow.aspide.it
 ## RequiredDeps:
-## OptionalDeps: AlarArtRemover
+## OptionalDeps: AlarArtRemover,OneChoice,VendorValue
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
-## SavedVariables: dbATE,alarspells
-## X-ID: ATE
-## X-Database:dbATE
+## SavedVariables: dbJVS
+## X-ID: JVS
+## X-Database:dbJVS
 ## X-Revision: $Revision: 527 $
 ## X-Category: Interface Enhancements
 ## X-Embeds: Ace3 AlarArtRemover
@@ -24,4 +24,5 @@
 ## X-Embeds:
 embeds.xml
 localization.lua
-Jeeves.lua
+Jeeves.xml
+RelNotes.lua
