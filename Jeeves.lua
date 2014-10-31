@@ -117,21 +117,25 @@ function addon:BuyMerchantItem(choice)
 	self:AskEquip(itemlink)
 end
 function addon:OnClick(this,button,opt)
-		debug("Clicked",button,opt)
-		if (button=="LeftButton") then
+	debug("Clicked",button,opt)
+	if (button=="LeftButton") then
+		if (this.autoWear) then
+			EquipItemByName(this.itemlink)
+		else
 			local foundid,bag,slot=self:ScanBags(0,addon:GetItemID(this.itemlink))
 			debug(foundid,bag,slot)
 			if (bag and slot) then
-					PickupContainerItem(bag,slot)
-					debug("Will equip ",this.iteminfo[1])
-					if (not CharacterFrame:IsShown()) then
-						ToggleCharacter("PaperDollFrame")
-					end
+				PickupContainerItem(bag,slot)
+				debug("Will equip ",this.iteminfo[1])
+				if (not CharacterFrame:IsShown()) then
+					ToggleCharacter("PaperDollFrame")
+				end
 			else
-					self:Onscreen_Red(this.iteminfo[1] .. ': ' .. ERR_ITEM_NOT_FOUND)
+						self:Onscreen_Red(this.iteminfo[1] .. ': ' .. ERR_ITEM_NOT_FOUND)
 			end
 		end
-		jeeves:Hide()
+	end
+	jeeves:Hide()
 end
 function addon:ToolTip(this)
 					GameTooltip:SetOwner(this, "ANCHOR_NONE");
@@ -184,7 +188,7 @@ function addon:ShowEquipRequest(itemlink)
 	local n=self:GetNumber("LOOK")
 	LootWonAlertFrame_SetUp(jeeves,itemlink,nil,nil,nil,nil,nil,n==2,n==3 and 10 or nil)
 	jeeves.Label:SetFormattedText(ITEM_LEVEL,iteminfo[4])
-	jeeves.Label:SetTextColor(self:ChooseColor(iteminfo))
+	jeeves.Label:SetTextColor(self:ChooseColor(iteminfo,jeeves))
 	AlertFrame_AnimateIn(jeeves);
 	AlertFrame_StopOutAnimation(jeeves)
 end
@@ -226,9 +230,11 @@ function addon:loc2slots(loc)
 			return _G[slot]
 	end
 end
-function addon:ChooseColor(iteminfo)
+-- Ugly, but i dont have another quick way to mark this item for more than 1 slot
+function addon:ChooseColor(iteminfo,frame)
 	debug(unpack(iteminfo))
 	local slot1,slot2=self:loc2slots(iteminfo[9])
+	frame.autoWear=(not slot2)
 	local nuovo=iteminfo[4] -- We assume that no item can drop already upgraded
 	local corrente=self:LowestLevel(
 						GetInventoryItemLink("player",slot1),
