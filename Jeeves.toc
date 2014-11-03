@@ -3,7 +3,9 @@
 ## Notes: Offers a quick way to wear just dropped eq
 ## Notes-itIT: Ti propone di indossare gli oggetti che droppi
 ## Author: Alar of Daggerspine
-## Version: 1.0.$Revision: 527 $
+## Version: @project-version@ @project-abbreviated-hash@
+## X-Version: 1.1.0
+## X-Revision: @project-abbreviated-hash@
 ## eMail: alar@aspide.it
 ## URL: http://wow.aspide.it
 ## RequiredDeps:
@@ -13,14 +15,12 @@
 ## SavedVariables: dbJVS
 ## X-ID: JVS
 ## X-Database:dbJVS
-## X-Revision: $Revision: 527 $
-## X-Category: Interface Enhancements
-## X-Embeds: Ace3 AlarArtRemover
-## X-Website: http://wow.aspide.it
-## X-License: LGPL v2.1
-## X-Donation: http://wow.aspide.it
+## X-Category: Quests Leveling
+## X-ID: MRF
+## X-Database: dbMRF
+## X-License: GPL v3
 ## X-eMail: alar@aspide.it
-## X-Date: $Date: 2014-10-13 18:07:34 +0200 (Mon, 13 Oct 2014) $
+## X-Date: @project-date-iso@
 ## X-Embeds:
 embeds.xml
 localization.lua
