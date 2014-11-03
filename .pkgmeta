@@ -11,7 +11,11 @@ externals:
 	libs/AlarShared-3.0:
 		url: git://git.curseforge.net/wow/alar-art-remover/mainline.git/libs/AlarShared-3.0
 
+manual-changelog:
+		filename: CHANGELOG.txt
+		markup-type: creole
 ignore:
 - .buildpath
 - .project
+- images
 

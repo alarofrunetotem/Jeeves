@@ -7,14 +7,13 @@ self:HF_Paragraph("Description")
 self:HF_Pre([[
 Jeeves assists you in dressing
 
-Whenever you acquire a new item suitable to upgrade your current equipment,  J
-eeves proposes you a quick button to wear it
-You can customize button appearance and minimu item quality
+Whenever you acquire a new item suitable to upgrade your current equipment,
+Jeeves proposes you a quick button to wear it
+You can customize button appearance and minimum item quality and level under which items are ignored
 
 ]])
 self:RelNotes(1,0,0,[[
 Initial release
 ]])
-
 end
 

@@ -7,7 +7,7 @@
 ## eMail: alar@aspide.it
 ## URL: http://wow.aspide.it
 ## RequiredDeps:
-## OptionalDeps: AlarArtRemover,OneChoice,VendorValue
+## OptionalDeps: AlarArtRemover,OneChoice
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: dbJVS

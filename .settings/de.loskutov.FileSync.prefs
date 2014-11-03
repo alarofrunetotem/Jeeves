@@ -1,7 +1,7 @@
 WARNING=DO NOT MODIFY THIS FILE IF YOU DON'T UNDERSTAND
-defaultDestination=@
+defaultDestination=/home/giovanni/Addons/Jeeves
 defaultVariables=
 eclipse.preferences.version=1
 includeTeamPrivateFiles=false
-map|0=/|,|.settings/|.buildpath;.project;localization.lua|,
-useCurrentDateForDestinationFiles=false
+map|0=/|,|,|,|,
+useCurrentDateForDestinationFiles=true

@@ -1,0 +1,12 @@
+= Jeeves =
+== Description ==
+Whenever you drop an interesting item, Jeeves offers you the chance to wear it asap
+
+* Customizable minimum required quality
+* Customizable minimum required distance from your average itemlevel
+==Quest reward panel enhancements==
+* Dims out( makes in balck and white) items that are not of the same class of your breast armor (if OneChoice is installed, this task is left to it)
+* Preselects the item with the highest vendor value
+
+== Release notes ==
+* 1.0.0 First release

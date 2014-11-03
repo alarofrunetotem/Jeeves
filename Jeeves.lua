@@ -13,9 +13,10 @@ local D=LibStub("LibDeformat-3.0")
 local I=LibStub("LibItemUpgradeInfo-1.0",true)
 local lastitem
 local jeeves
+local average=0
 local SetItemButtonTexture= SetItemButtonTexture
 local SetItemButtonCount=SetItemButtonCount
-local GetItemInfo=addon:GetCachingGetItemInfo()
+local GetItemInfo=GetItemInfo
 local GetQuestItemLink=GetQuestItemLink
 local GetMerchantItemLink=GetMerchantItemLink
 local GetContainerNumSlots=GetContainerNumSlots
@@ -31,38 +32,46 @@ local CreateFrame=CreateFrame
 local LOOT_ITEM_SELF=LOOT_ITEM_SELF
 local GetItemQualityColor=GetItemQualityColor
 local QuestDifficultyColors=QuestDifficultyColors
+local GetInventoryItemLink=GetInventoryItemLink
+local GetNumQuestChoices=GetNumQuestChoices
+local QuestInfoItem_OnClick=QuestInfoItem_OnClick
+local SetItemButtonTextureVertexColor=SetItemButtonTextureVertexColor
+local SetItemButtonNameFrameVertexColor=SetItemButtonNameFrameVertexColor
+local SetItemButtonDesaturated=SetItemButtonDesaturated
+local GetAverageItemLevel=GetAverageItemLevel
+local InCombatLockdown=InCombatLockdown
+local tonumber=tonumber
+local OneChoice
 local _G=_G
-function addon:OnInitialized()
-	GetItemInfo(6256)
-	if (D) then
-		self:RegisterEvent("CHAT_MSG_LOOT")
-		self:SecureHook("GetQuestReward")
-		self:SecureHook("BuyMerchantItem")
-		self:ShowEquipRequest()
-		local qselection={}
-		for i=1,4 do
-			qselection[i]=_G['ITEM_QUALITY'..i..'_DESC']
+local autoitem=1
+local function loc2slots(loc)
+	local slot=loc:gsub('INVTYPE','INVSLOT')
+	if (not _G[slot]) then
+		if (slot=='INVSLOT_FINGER' or slot=='INVSLOT_TRINKET') then
+			return _G[slot..'1'],_G[slot..'2']
+		elseif (slot=='INVSLOT_WEAPON') then
+			return INVSLOT_MAINHAND,INVSLOT_OFFHAND
+		elseif  (slot=='INVSLOT_2HWEAPON' or slot=='INVSLOT_WEAPONMAINHAND') then
+			return INVSLOT_MAINHAND
+		elseif  (slot=='INVSLOT_HOLDABLE' or slot=='INVSLOT_WEAPONOFFHAND') then
+			return INVSLOT_OFFHAND
+		elseif  (slot=='INVSLOT_RANGED' or slot=='INVSLOT_THROWN') then
+			return INVSLOT_RANGED
+		elseif  (slot=='INVSLOT_ROBE' ) then
+			return INVSLOT_CHEST
 		end
-		self:AddSelect('MINQUAL',1,qselection,MINIMUM .. ' ' .. RARITY,L['Ignore items under this level of quality'])
-		self:AddText('')
-		local aselection={}
-		aselection[1]=DEFAULT
-		aselection[2]=CALENDAR_TYPE_PVP
-		aselection[3]=GARRISON_LOCATION_TOOLTIP
-		self:AddSelect('LOOK',1,aselection,APPEARANCE_LABEL,L["Appearance of popup button"])
-		self:AddText('')
-		self:AddAction('demo',L["Show an example"])
-		self:AddText('')
-		--self:loadHelp()
---@debug@
-		self:AddOpenCmd('redo','redo')
-		self:AddOpenCmd('test','test')
---@debug-end@
 	else
-	error("Cant found LibDeformat-3.0")
+		return _G[slot]
 	end
 end
-local autoitem=1
+local slotTable=setmetatable({},{
+	__index=function(table,key)
+		local s1,s2=loc2slots(key)
+		rawset(table,key,{s1=s1,s2=s2,double=s2})
+		return table[key]
+	end
+})
+
 --@debug@
 function addon:test(item)
 	item=tonumber(item)
@@ -131,7 +140,7 @@ function addon:OnClick(this,button,opt)
 					ToggleCharacter("PaperDollFrame")
 				end
 			else
-						self:Onscreen_Red(this.iteminfo[1] .. ': ' .. ERR_ITEM_NOT_FOUND)
+				self:Onscreen_Red(this.iteminfo[1] .. ': ' .. ERR_ITEM_NOT_FOUND)
 			end
 		end
 	end
@@ -149,7 +158,14 @@ function addon:ToolTip(this)
 end
 function addon:AskEquip(itemlink)
 	print(GetItemInfo(itemlink))
+	average=GetAverageItemLevel()
 	if (IsEquippableItem(itemlink) and select(3,GetItemInfo(itemlink)) >= self:GetNumber('MINQUAL')) then
+		local perc=self:Compare(GetIteminfo(itemlink,4),GetItemInfo(itemlink,9))
+		this.autoWear= not ((slotTable[GetItemInfo(itemlink,9)]).double)
+		if (perc<self:GetNumber('MINLEVEL')) then
+			print(itemlink,"failed perc",perc)
+			return
+		end
 		lastitem=itemlink
 		if (InCombatLockdown()) then
 			self:ScheduleLeaveCombatAction('ShowEquipRequest',itemlink)
@@ -197,53 +213,42 @@ function addon:LowestLevel(itemlink1,itemlink2)
 	local livello1
 	local livello2
 	if (itemlink1) then
-			livello1=select(4,GetItemInfo(itemlink1))
-			if (I) then
-				livello1=livello1+I:GetItemLevelUpgrade(I:GetUpgradeID(itemlink1))
-			end
+		livello1=select(4,GetItemInfo(itemlink1,100))
 	end
 	if (itemlink2) then
-			livello2=select(4,GetItemInfo(itemlink2))
-			if (I) then
-				livello2=livello2+I:GetItemLevelUpgrade(I:GetUpgradeID(itemlink2))
-			end
+		livello2=select(4,GetItemInfo(itemlink2,100))
 	end
 	if (not livello1) then return livello2 end
 	if (not livello2) then return livello1 end
 	if (livello1>livello2) then return livello2 else return livello1 end
 end
-function addon:loc2slots(loc)
-	local slot=loc:gsub('INVTYPE','INVSLOT')
-	if (not _G[slot]) then
-			if (slot=='INVSLOT_FINGER' or slot=='INVSLOT_TRINKET') then
-				return _G[slot..'1'],_G[slot..'2']
-			elseif (slot=='INVSLOT_WEAPON') then
-				return INVSLOT_MAINHAND,INVSLOT_OFFHAND
-			elseif  (slot=='INVSLOT_2HWEAPON' or slot=='INVSLOT_WEAPONMAINHAND') then
-				return INVSLOT_MAINHAND
-			elseif  (slot=='INVSLOT_HOLDABLE' or slot=='INVSLOT_WEAPONOFFHAND') then
-				return INVSLOT_OFFHAND
-			elseif  (slot=='INVSLOT_RANGED' or slot=='INVSLOT_THROWN') then
-				return INVSLOT_RANGED
-			end
-	else
-			return _G[slot]
-	end
+function addon:NeedMaterial(slot)
+	print("Checking slot",slot)
+	if (slot=='INVTYPE_HEAD' or
+		slot=='INVTYPE_SHOULDER' or
+		slot=='INVTYPE_CHEST' or
+		slot=='INVTYPE_ROBE' or
+		slot=='INVTYPE_WAIST' or
+		slot=='INVTYPE_LEGS' or
+		slot=='INVTYPE_FEET' or
+		slot=='INVTYPE_WRIST' or
+		slot=='INVTYPE_HAND'
+		)
+		then
+			return true
+		end
 end
 -- Ugly, but i dont have another quick way to mark this item for more than 1 slot
-function addon:ChooseColor(iteminfo,frame)
-	debug(unpack(iteminfo))
-	local slot1,slot2=self:loc2slots(iteminfo[9])
-	frame.autoWear=(not slot2)
+function addon:ChooseColor(iteminfo)
+
 	local nuovo=iteminfo[4] -- We assume that no item can drop already upgraded
 	local corrente=self:LowestLevel(
 						GetInventoryItemLink("player",slot1),
 						slot2 and GetInventoryItemLink("player",slot2) or nil
 				)
-	local perc=nuovo/(corrente or 1)*100
-	debug(nuovo,corrente,perc)
+	local perc=self:Compare(iteminfo[4],iteminfo[9])
 	local difficulty='impossible'
-	if (perc < 60) then
+	if (perc < 90) then
 			difficulty='trivial'
 	elseif(perc<101) then
 			difficulty='standard'
@@ -255,6 +260,85 @@ function addon:ChooseColor(iteminfo,frame)
 	local q=QuestDifficultyColors[difficulty]
 	return q.r,q.g,q.b
 end
-
+function addon:Compare(level,loc)
+	local slot1=slotTable[loc].s1
+	local slot2=slotTable[loc].s2
+	local corrente=self:LowestLevel(
+						GetInventoryItemLink("player",slot1),
+						slot2 and GetInventoryItemLink("player",slot2) or nil
+				)
+	return level/(corrente or 1)*100
+end
+function addon:PreSelectReward()
+	local price,id;
+	local armorLink,armorClass=GetInventoryItemLink("player",GetInventorySlotInfo('ChestSlot')),nil
+	if (armorLink) then
+		armorClass=select(7,GetItemInfo(armorLink))
+	end
+	for i=1,GetNumQuestChoices() do
+		local itemlink = GetQuestItemLink("choice",i);
+		if itemlink then
+			local itemprice = GetItemInfo(itemlink,11) or 0;
+			if (not price) or (itemprice > price) then
+				price = itemprice;
+				id = i;
+			end
+			if (not OneChoice and self:GetBoolean'DIM') then
+				local questItem=_G["QuestInfoRewardsFrameQuestInfoItem"..i]
+				if (armorClass and self:NeedMaterial(GetItemInfo(itemlink,9)) and armorClass ~= GetItemInfo(itemlink,7)) then
+					SetItemButtonDesaturated(questItem, true);
+				elseif (self:Compare(GetItemInfo(itemlink,4),GetItemInfo(itemlink,9))<self:GetNumber("MINLEVEL")) then
+					SetItemButtonDesaturated(questItem, true);
+				else
+					SetItemButtonDesaturated(questItem, false);
+				end
+			end
+		end
+	end
+	if id then
+		QuestInfoItem_OnClick(_G["QuestInfoRewardsFrameQuestInfoItem"..id]);
+	end
+end
+function addon:OnInitialized()
+	GetItemInfo=addon:GetCachingGetItemInfo()
+	OneChoice=IsAddOnLoaded("OneChoice")
+	GetItemInfo(6256)
+	self:ShowEquipRequest()
+	local qselection={}
+	for i=1,4 do
+		qselection[i]=_G['ITEM_QUALITY'..i..'_DESC']
+	end
+	local lselection={
+		[95]="5% under " .. STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
+		[100]= STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
+		[101]= "2% over " .. STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
+		[102]= "5% over " .. STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
+	}
+	if (not OneChoice) then
+		self:AddBoolean('DIM',true,L['Dim suboptimal quest rewards'],L['Items not your preferred type are grayed out']).width='full'
+	end
+	self:AddSelect('MINQUAL',1,qselection,MINIMUM .. ' ' .. RARITY,L['Ignore items under this level of quality'])
+	self:AddSelect('MINLEVEL',1,lselection,LFG_LIST_ITEM_LEVEL_REQ,L['Ignore items under this level of quality'])
+	self:AddText('')
+	local aselection={}
+	aselection[1]=DEFAULT
+	aselection[2]=CALENDAR_TYPE_PVP
+	aselection[3]=GARRISON_LOCATION_TOOLTIP
+	self:AddSelect('LOOK',1,aselection,APPEARANCE_LABEL,L["Appearance of popup button"])
+	self:AddText('')
+	self:AddAction('demo',L["Show an example"])
+	self:AddText('')
+	--self:loadHelp()
+--@debug@
+	self:AddOpenCmd('redo','redo')
+	self:AddOpenCmd('test','test')
+	self:_SwitchDebug(nil,'on')
+--@debug-end@
+	self:RegisterEvent("CHAT_MSG_LOOT")
+	self:SecureHook("GetQuestReward")
+	self:SecureHook("BuyMerchantItem")
+	self:RegisterEvent("QUEST_COMPLETE","PreSelectReward");
+	self:RegisterEvent("QUEST_ITEM_UPDATE","PreSelectReward");
+end
 
 _G.JVS=addon
