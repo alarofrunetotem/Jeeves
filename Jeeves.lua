@@ -88,7 +88,7 @@ function addon:test(item)
 	end
 	self:redo()
 end
---@debug-end@
+--@end-debug@
 function addon:demo()
 	lastitem=select(2,GetItemInfo(6256))
 	self:redo()
@@ -316,14 +316,14 @@ function addon:OnInitialized()
 	local lselection={
 		[95]="5% under " .. STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
 		[100]= STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
-		[101]= "2% over " .. STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
-		[102]= "5% over " .. STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
+		[101]= "1% over " .. STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
+		[102]= "2% over " .. STAT_AVERAGE_ITEM_LEVEL_TOOLTIP,
 	}
 	if (not OneChoice) then
 		self:AddBoolean('DIM',true,L['Dim suboptimal quest rewards'],L['Items not your preferred type are grayed out']).width='full'
 	end
 	self:AddSelect('MINQUAL',1,qselection,MINIMUM .. ' ' .. RARITY,L['Ignore items under this level of quality'])
-	self:AddSelect('MINLEVEL',1,lselection,LFG_LIST_ITEM_LEVEL_REQ,L['Ignore items under this level of quality'])
+	self:AddSelect('MINLEVEL',100,lselection,LFG_LIST_ITEM_LEVEL_REQ,L['Ignore items under this level of quality'])
 	self:AddText('')
 	local aselection={}
 	aselection[1]=DEFAULT
