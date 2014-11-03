@@ -130,7 +130,8 @@ end
 function addon:OnClick(this,button,opt)
 	debug("Clicked",button,opt)
 	if (button=="LeftButton") then
-		if (this.autoWear) then
+		local autoWear= not ((slotTable[GetItemInfo(this.itemlink,9)]).double)
+		if (autoWear) then
 			EquipItemByName(this.itemlink)
 		else
 			local foundid,bag,slot=self:ScanBags(0,addon:GetItemID(this.itemlink))
@@ -163,7 +164,6 @@ function addon:AskEquip(itemlink)
 	average=GetAverageItemLevel()
 	if (IsEquippableItem(itemlink) and select(3,GetItemInfo(itemlink)) >= self:GetNumber('MINQUAL')) then
 		local perc=self:Compare(GetItemInfo(itemlink,4),GetItemInfo(itemlink,9))
-		this.autoWear= not ((slotTable[GetItemInfo(itemlink,9)]).double)
 		if (perc<self:GetNumber('MINLEVEL')) then
 			debug(itemlink,"failed perc",perc)
 			return
