@@ -244,10 +244,6 @@ end
 function addon:ChooseColor(iteminfo)
 
 	local nuovo=iteminfo[4] -- We assume that no item can drop already upgraded
-	local corrente=self:LowestLevel(
-						GetInventoryItemLink("player",slot1),
-						slot2 and GetInventoryItemLink("player",slot2) or nil
-				)
 	local perc=self:Compare(iteminfo[4],iteminfo[9])
 	local difficulty='impossible'
 	if (perc < 90) then
@@ -297,8 +293,11 @@ function addon:PreSelectReward()
 			end
 		end
 	end
-	if id then
-		QuestInfoItem_OnClick(_G["QuestInfoRewardsFrameQuestInfoItem"..id]);
+	if (id) then
+		local frame=_G["QuestInfoRewardsFrameQuestInfoItem"..id]
+		if (frame) then
+			QuestInfoItem_OnClick(frame);
+		end
 	end
 end
 function addon:OnInitialized()
