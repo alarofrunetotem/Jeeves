@@ -8,6 +8,9 @@ local C=LibStub("AlarCrayon-3.0"):GetColorTable()
 local addon=LibStub("AlarLoader-3.0")(__FILE__,me,ns):CreateAddon(me,true) --#Addon
 local print=ns.print or print
 local debug=ns.debug or print
+--@debug@
+ns.debugEnable('on')
+--@end-debug@
 -----------------------------------------------------------------
 local D=LibStub("LibDeformat-3.0")
 local I=LibStub("LibItemUpgradeInfo-1.0",true)
@@ -157,13 +160,13 @@ function addon:ToolTip(this)
 					CursorUpdate(this);
 end
 function addon:AskEquip(itemlink)
-	print(GetItemInfo(itemlink))
+	debug(GetItemInfo(itemlink))
 	average=GetAverageItemLevel()
 	if (IsEquippableItem(itemlink) and select(3,GetItemInfo(itemlink)) >= self:GetNumber('MINQUAL')) then
-		local perc=self:Compare(GetIteminfo(itemlink,4),GetItemInfo(itemlink,9))
+		local perc=self:Compare(GetItemInfo(itemlink,4),GetItemInfo(itemlink,9))
 		this.autoWear= not ((slotTable[GetItemInfo(itemlink,9)]).double)
 		if (perc<self:GetNumber('MINLEVEL')) then
-			print(itemlink,"failed perc",perc)
+			debug(itemlink,"failed perc",perc)
 			return
 		end
 		lastitem=itemlink
@@ -300,7 +303,9 @@ function addon:PreSelectReward()
 	end
 end
 function addon:OnInitialized()
+	debug(306,GetItemInfo)
 	GetItemInfo=addon:GetCachingGetItemInfo()
+	debug(308,GetItemInfo)
 	OneChoice=IsAddOnLoaded("OneChoice")
 	GetItemInfo(6256)
 	self:ShowEquipRequest()
@@ -328,17 +333,21 @@ function addon:OnInitialized()
 	self:AddText('')
 	self:AddAction('demo',L["Show an example"])
 	self:AddText('')
-	--self:loadHelp()
+	self:loadHelp()
 --@debug@
 	self:AddOpenCmd('redo','redo')
 	self:AddOpenCmd('test','test')
-	self:_SwitchDebug(nil,'on')
---@debug-end@
+--@end-debug@
+end
+function addon:OnEnabled()
 	self:RegisterEvent("CHAT_MSG_LOOT")
 	self:SecureHook("GetQuestReward")
 	self:SecureHook("BuyMerchantItem")
 	self:RegisterEvent("QUEST_COMPLETE","PreSelectReward");
 	self:RegisterEvent("QUEST_ITEM_UPDATE","PreSelectReward");
 end
-
+function addon:OnDisabled()
+	self:UnregisterAll()
+	self:UnhokAll()
+end
 _G.JVS=addon
