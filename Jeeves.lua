@@ -13,7 +13,6 @@ ns.debugEnable('on')
 --@end-debug@
 -----------------------------------------------------------------
 local D=LibStub("LibDeformat-3.0")
-local I=LibStub("LibItemUpgradeInfo-1.0",true)
 local lastitem
 local jeeves
 local average=0
