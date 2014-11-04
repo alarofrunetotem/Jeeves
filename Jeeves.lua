@@ -44,6 +44,7 @@ local GetAverageItemLevel=GetAverageItemLevel
 local InCombatLockdown=InCombatLockdown
 local tonumber=tonumber
 local OneChoice
+local armorClass=nil
 local _G=_G
 local autoitem=1
 local function loc2slots(loc)
@@ -61,6 +62,8 @@ local function loc2slots(loc)
 			return INVSLOT_RANGED
 		elseif  (slot=='INVSLOT_ROBE' ) then
 			return INVSLOT_CHEST
+		elseif  (slot=='INVSLOT_CLOAK' ) then
+			return INVSLOT_BACK
 		end
 	else
 		return _G[slot]
@@ -99,13 +102,6 @@ function addon:redo()
 	end
 end
 
-function addon:GetItemID(itemlink)
-	if (type(itemlink)=="string") then
-			return tonumber(itemlink:match("Hitem:(%d+):")) or 0
-	else
-			return 0
-	end
-end
 function addon:CHAT_MSG_LOOT(evt,p1)
 	local newLink=D.Deformat(p1,LOOT_ITEM_SELF)
 	local rc,name,itemlink,rarity,level,minlevel,type,subtype,count,loc,texture,price=pcall(GetItemInfo,newLink)
@@ -116,6 +112,9 @@ function addon:CHAT_MSG_LOOT(evt,p1)
 			debug("Dropped equippable object",name,loc,_G[loc])
 			self:AskEquip(itemlink)
 	end
+end
+function addon:UNIT_INVENTORY_CHANGED(event,unit)
+	armorClass=nil
 end
 function addon:GetQuestReward(choice)
 	local itemlink=GetQuestItemLink("choice",choice)
@@ -162,7 +161,7 @@ end
 function addon:AskEquip(itemlink)
 	debug(GetItemInfo(itemlink))
 	average=GetAverageItemLevel()
-	if (IsEquippableItem(itemlink) and select(3,GetItemInfo(itemlink)) >= self:GetNumber('MINQUAL')) then
+	if (IsEquippableItem(itemlink) and GetItemInfo(itemlink,3) >= self:GetNumber('MINQUAL') and self:ValidArmorClass(itemlink)) then
 		local perc=self:Compare(GetItemInfo(itemlink,4),GetItemInfo(itemlink,9))
 		if (perc<self:GetNumber('MINLEVEL')) then
 			debug(itemlink,"failed perc",perc)
@@ -215,17 +214,19 @@ function addon:LowestLevel(itemlink1,itemlink2)
 	local livello1
 	local livello2
 	if (itemlink1) then
-		livello1=select(4,GetItemInfo(itemlink1,100))
+		livello1=GetItemInfo(itemlink1,100)
+		debug("1",livello1,GetItemInfo(itemlink1,100))
 	end
 	if (itemlink2) then
-		livello2=select(4,GetItemInfo(itemlink2,100))
+		livello2=GetItemInfo(itemlink2,100)
+		debug("2",livello2,GetItemInfo(itemlink2,100))
 	end
 	if (not livello1) then return livello2 end
 	if (not livello2) then return livello1 end
 	if (livello1>livello2) then return livello2 else return livello1 end
 end
-function addon:NeedMaterial(slot)
-	print("Checking slot",slot)
+function addon:HasArmorClass(itemlink)
+	local slot=GetItemInfo(itemlink,9)
 	if (slot=='INVTYPE_HEAD' or
 		slot=='INVTYPE_SHOULDER' or
 		slot=='INVTYPE_CHEST' or
@@ -265,7 +266,27 @@ function addon:Compare(level,loc)
 						GetInventoryItemLink("player",slot1),
 						slot2 and GetInventoryItemLink("player",slot2) or nil
 				)
+	debug("Compare:",slot1,slot2,level,corrente)
 	return level/(corrente or 1)*100
+end
+function addon:ValidArmorClass(itemlink)
+	if (self:HasArmorClass(itemlink)) then
+		if (not armorClass) then
+			armorClass=GetInventoryItemLink("player",INVSLOT_CHEST)
+			if (not armorClass) then
+				armorClass=GetInventoryItemLink("player",INVSLOT_LEGS)
+			end
+			if (armorClass) then
+				armorClass=GetItemInfo(armorClass,7)
+			end
+		end
+		if (armorClass) then
+			return armorClass==GetItemInfo(itemlink,9)
+		end
+	else
+		return true
+	end
+
 end
 function addon:PreSelectReward()
 	local price,id;
@@ -283,7 +304,7 @@ function addon:PreSelectReward()
 			end
 			if (not OneChoice and self:GetBoolean'DIM') then
 				local questItem=_G["QuestInfoRewardsFrameQuestInfoItem"..i]
-				if (armorClass and self:NeedMaterial(GetItemInfo(itemlink,9)) and armorClass ~= GetItemInfo(itemlink,7)) then
+				if (not self:ValidArmorClass(itemlink)) then
 					SetItemButtonDesaturated(questItem, true);
 				elseif (self:Compare(GetItemInfo(itemlink,4),GetItemInfo(itemlink,9))<self:GetNumber("MINLEVEL")) then
 					SetItemButtonDesaturated(questItem, true);
@@ -343,6 +364,7 @@ function addon:OnEnabled()
 	self:SecureHook("BuyMerchantItem")
 	self:RegisterEvent("QUEST_COMPLETE","PreSelectReward");
 	self:RegisterEvent("QUEST_ITEM_UPDATE","PreSelectReward");
+	self:RegisterEvent("UNIT_INVENTORY_CHANGED")
 end
 function addon:OnDisabled()
 	self:UnregisterAll()
