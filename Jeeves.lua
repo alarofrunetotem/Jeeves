@@ -266,7 +266,7 @@ function addon:Compare(level,loc)
 						GetInventoryItemLink("player",slot1),
 						slot2 and GetInventoryItemLink("player",slot2) or nil
 				)
-	debug("Compare:",slot1,slot2,level,corrente)
+	debug("Compare:",loc,slot1,slot2,level,corrente,GetInventoryItemLink("player",slot1),slot2 and GetInventoryItemLink("player",slot2) or nil)
 	return level/(corrente or 1)*100
 end
 function addon:ValidArmorClass(itemlink)
@@ -281,7 +281,8 @@ function addon:ValidArmorClass(itemlink)
 			end
 		end
 		if (armorClass) then
-			return armorClass==GetItemInfo(itemlink,9)
+			debug('ValidAdrmorClass',armorClass,GetItemInfo(itemlink,7))
+			return armorClass==GetItemInfo(itemlink,7)
 		end
 	else
 		return true
@@ -294,6 +295,8 @@ function addon:PreSelectReward()
 	if (armorLink) then
 		armorClass=select(7,GetItemInfo(armorLink))
 	end
+	debug("--------------------",self:GetBoolean('DIM'))
+	debug(armorLink,armorClass)
 	for i=1,GetNumQuestChoices() do
 		local itemlink = GetQuestItemLink("choice",i);
 		if itemlink then
@@ -302,8 +305,8 @@ function addon:PreSelectReward()
 				price = itemprice;
 				id = i;
 			end
-			if (not OneChoice and self:GetBoolean'DIM') then
-				local questItem=_G["QuestInfoRewardsFrameQuestInfoItem"..i]
+			local questItem=_G["QuestInfoRewardsFrameQuestInfoItem"..i]
+			if (self:GetBoolean('DIM')) then
 				if (not self:ValidArmorClass(itemlink)) then
 					SetItemButtonDesaturated(questItem, true);
 				elseif (self:Compare(GetItemInfo(itemlink,4),GetItemInfo(itemlink,9))<self:GetNumber("MINLEVEL")) then
@@ -311,6 +314,8 @@ function addon:PreSelectReward()
 				else
 					SetItemButtonDesaturated(questItem, false);
 				end
+			else
+				SetItemButtonDesaturated(questItem, false);
 			end
 		end
 	end
