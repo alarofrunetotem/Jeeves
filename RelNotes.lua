@@ -15,6 +15,9 @@ ones not your armor class.
 Note, I reccomend OneChoice to improve you quest reward selection experience
 
 ]])
+self:RelNotes(1,0,2,[[
+Fix: Quest rewards are now correctly proposed even if quest has only one choice
+]])
 self:RelNotes(1,0,1,[[
 Fix: Quest rewards are now correctly grayed out
 ]])

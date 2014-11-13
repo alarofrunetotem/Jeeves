@@ -43,10 +43,19 @@ local SetItemButtonDesaturated=SetItemButtonDesaturated
 local GetAverageItemLevel=GetAverageItemLevel
 local InCombatLockdown=InCombatLockdown
 local tonumber=tonumber
+local tinsert=tinsert
+local tremove=tremove
 local OneChoice
 local armorClass=nil
 local _G=_G
 local autoitem=1
+local wearqueue={}
+local function push(itemlink)
+	tinsert(wearqueue,itemlink)
+end
+local function pop()
+	return tremove(wearqueue,1)
+end
 local function loc2slots(loc)
 	local slot=loc:gsub('INVTYPE','INVSLOT')
 	if (not _G[slot]) then
@@ -92,7 +101,7 @@ function addon:test(item)
 end
 --@end-debug@
 function addon:demo()
-	lastitem=select(2,GetItemInfo(6256))
+	lastitem=select(2,GetItemInfo(6256)) -- A nice fishing pole
 	self:redo()
 	lastitem=nil
 end
@@ -117,8 +126,9 @@ function addon:UNIT_INVENTORY_CHANGED(event,unit)
 	armorClass=nil
 end
 function addon:GetQuestReward(choice)
+	if (not choice or choice==0) then choice=1 end
 	local itemlink=GetQuestItemLink("choice",choice)
-	debug("Assegnato reward",itemlink)
+	debug("Assegnato reward",itemlink, "from",choice)
 	self:AskEquip(itemlink)
 end
 function addon:BuyMerchantItem(choice)
@@ -147,6 +157,8 @@ function addon:OnClick(this,button,opt)
 		end
 	end
 	jeeves:Hide()
+	self:AskEquip()
+
 end
 function addon:ToolTip(this)
 					GameTooltip:SetOwner(this, "ANCHOR_NONE");
@@ -159,6 +171,10 @@ function addon:ToolTip(this)
 					CursorUpdate(this);
 end
 function addon:AskEquip(itemlink)
+	if (not itemlink) then
+		itemlink=pop()
+	end
+	if (not itemlink) then return end
 	debug(GetItemInfo(itemlink))
 	average=GetAverageItemLevel()
 	if (IsEquippableItem(itemlink) and GetItemInfo(itemlink,3) >= self:GetNumber('MINQUAL') and self:ValidArmorClass(itemlink)) then
@@ -168,10 +184,11 @@ function addon:AskEquip(itemlink)
 			return
 		end
 		lastitem=itemlink
+		push(itemlink)
 		if (InCombatLockdown()) then
-			self:ScheduleLeaveCombatAction('ShowEquipRequest',itemlink)
+			self:ScheduleLeaveCombatAction('ShowEquipRequest')
 		else
-			self:ScheduleTimer('ShowEquipRequest',1,itemlink)
+			self:ScheduleTimer('ShowEquipRequest',1)
 		end
 	end
 end
@@ -194,6 +211,8 @@ function addon:ShowEquipRequest(itemlink)
 			jeeves:SetScript("OnClick",function(...) addon:OnClick(...) end)
 			jeeves:SetScript("OnEnter",function(...) addon:ToolTip(...) end)
 	end
+	if (not itemlink) then itemlink=pop() end
+	if (not itemlink) then return end
 	jeeves.itemlink=itemlink
 	jeeves.iteminfo=jeeves.iteminfo or {}
 	if (not jeeves.itemlink) then jeeves:Hide() return end
