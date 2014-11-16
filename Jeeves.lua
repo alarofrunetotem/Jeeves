@@ -113,6 +113,8 @@ end
 
 function addon:CHAT_MSG_LOOT(evt,p1)
 	local newLink=D.Deformat(p1,LOOT_ITEM_SELF)
+	if (not newLink) then newLink=D.Deformat(p1,LOOT_ITEM_PUSHED_SELF) end
+	if (not newLink) then return end
 	local rc,name,itemlink,rarity,level,minlevel,type,subtype,count,loc,texture,price=pcall(GetItemInfo,newLink)
 	if (not rc) then
 			debug(p1, "has not a valid itemlink:",newLink)

@@ -15,7 +15,10 @@ ones not your armor class.
 Note, I reccomend OneChoice to improve you quest reward selection experience
 
 ]])
-self:RelNotes(1,0,2,[[
+self:RelNotes(1,2,0,[[
+Feature: Considers also item directly pushed in inventory (like Missions rewards)
+]])
+self:RelNotes(1,1,1,[[
 Fix: Quest rewards are now correctly proposed even if quest has only one choice
 ]])
 self:RelNotes(1,0,1,[[
