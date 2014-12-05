@@ -314,7 +314,7 @@ function addon:PreSelectReward()
 	local price,id;
 	local armorLink,armorClass=GetInventoryItemLink("player",GetInventorySlotInfo('ChestSlot')),nil
 	if (armorLink) then
-		armorClass=select(7,GetItemInfo(armorLink))
+		armorClass=GetItemInfo(armorLink,7)
 	end
 	debug("--------------------",self:GetBoolean('DIM'))
 	debug(armorLink,armorClass)
