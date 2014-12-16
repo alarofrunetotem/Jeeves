@@ -2,6 +2,8 @@ package-as: Jeeves
 enable-nolib-creation: no
 
 externals:
+	libs/Ace3:
+		url: svn://svn.wowace.com/wow/ace3/mainline/trunk
 	libs/LibItemUpgradeInfo-1.0:
 		url: git://git.wowace.com/wow/libitemupgradeinfo-1-0/mainline.git
 		tag: latest
