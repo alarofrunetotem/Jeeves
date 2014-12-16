@@ -10,6 +10,8 @@ externals:
 		tag: latest
 	libs/AlarShared-3.0:
 		url: git://git.curseforge.net/wow/alar-art-remover/mainline.git/libs/AlarShared-3.0
+	libs/LibInit:
+		url: git://git.curseforge.net/wow/libinit/mainline.git/LibInit
 
 manual-changelog:
 		filename: CHANGELOG.txt
