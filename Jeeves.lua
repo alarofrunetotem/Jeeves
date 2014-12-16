@@ -302,7 +302,7 @@ function addon:ValidArmorClass(itemlink)
 			end
 		end
 		if (armorClass) then
-			debug('ValidAdrmorClass',armorClass,GetItemInfo(itemlink,7))
+			debug('ValidArmorClass',armorClass,GetItemInfo(itemlink,7))
 			return armorClass==GetItemInfo(itemlink,7)
 		end
 	else
