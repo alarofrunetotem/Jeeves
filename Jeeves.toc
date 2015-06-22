@@ -1,10 +1,9 @@
-## Interface: 60100
+## Interface: 60200
 ## Title: Jeeves
 ## Notes: Offers a quick way to wear just dropped eq
 ## Notes-itIT: Ti propone di indossare gli oggetti che droppi
 ## Author: Alar of Daggerspine
-## Version: @project-version@ @project-abbreviated-hash@
-## X-Version: 1.2.1
+## Version: @project-version@ 6.2.0
 ## X-Revision: @project-abbreviated-hash@
 ## eMail: alar@aspide.it
 ## URL: http://wow.aspide.it
