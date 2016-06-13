@@ -5,10 +5,11 @@ Whenever you drop an interesting item, Jeeves offers you the chance to wear it a
 * Customizable minimum required quality
 * Customizable minimum required distance from your average itemlevel
 ==Quest reward panel enhancements==
-* Dims out( makes in balck and white) items that are not of the same class of your breast armor (if OneChoice is installed, this task is left to it)
+* Dims out( makes in black and white) items that are not of the same class of your breast armor (if OneChoice is installed, this task is left to it)
 * Preselects the item with the highest vendor value
 
 == Release notes ==
+* 1.4.0 Legion compatible (you need to enable out of date addons or manually change toc to 70000
 * 1.2.0 Feature: Considers also item directly pushed in inventory (like Missions rewards)
 * 1.1.1 Fix: Quest rewards are now correctly proposed even if quest has only one choice
 * 1.0.1 Fix: Quest rewards are now correctly grayed out

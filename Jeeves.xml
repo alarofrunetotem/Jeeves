@@ -16,7 +16,7 @@
 				self:StartMoving()
 			</OnDragStart>
 			<OnDragStop>
-				self:SetopMovingOrSizing()
+				self:StopMovingOrSizing()
 			</OnDragStop>
 			<OnLeave>
 				GameTooltip:Hide()

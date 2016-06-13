@@ -8,19 +8,17 @@
 ## eMail: alar@aspide.it
 ## URL: http://wow.aspide.it
 ## RequiredDeps:
-## OptionalDeps: AlarArtRemover,OneChoice
+## OptionalDeps: AlarArtRemover,OneChoice,LibInit,LibItemUpgradeInfo-1.0
 ## DefaultState: Enabled
 ## LoadOnDemand: 0
 ## SavedVariables: dbJVS
 ## X-ID: JVS
 ## X-Database:dbJVS
 ## X-Category: Quests Leveling
-## X-ID: MRF
-## X-Database: dbMRF
 ## X-License: GPL v3
 ## X-eMail: alar@aspide.it
 ## X-Date: @project-date-iso@
-## X-Embeds:
+## X-Embeds: LibInit,LibItemUpgradeInfo-1.0
 embeds.xml
 localization.lua
 Jeeves.xml
