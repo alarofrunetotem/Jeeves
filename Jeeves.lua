@@ -254,8 +254,9 @@ function addon:APPLY(...)
 print("Apply",...)
 --@end-debug@
 end
-
+local AlertFrame_AnimateIn=_G.AlertFrame_AnimateIn
 if not AlertFrame_AnimateIn then
+-- Legion change
 	function AlertFrame_AnimateIn(frame)
 
 		frame:Show();
@@ -322,15 +323,16 @@ print("Calculating level for",itemlink1,itemlink2)
 	local livello1
 	local livello2
 	if (itemlink1) then
-		livello1=GetItemInfo(itemlink1,100)
+		livello1=I:GetUpgradedItemLevel(itemlink1)
+
 	--@debug@
-print("1",livello1,GetItemInfo(itemlink1,100))
+print("1",livello1)
 --@end-debug@
 	end
 	if (itemlink2) then
-		livello2=GetItemInfo(itemlink2,100)
+		livello2=I:GetUpgradedItemLevel(itemlink2)
 	--@debug@
-print("2",livello2,GetItemInfo(itemlink2,100))
+print("2",livello2)
 --@end-debug@
 	end
 	if (not livello1) then return livello2 end
