@@ -6,10 +6,11 @@ local pp=print
 --@debug@
 LoadAddOn("Blizzard_DebugTools")
 LoadAddOn("LibDebug")
-if LibDebug then LibDebug() ns.print=print else ns.print=function() end end
+if LibDebug then LibDebug() ns.print=print end
 --@end-debug@
 --[===[@non-debug@
 ns.print=function() end
+pp=ns.print
 --@end-non-debug@]===]
 local addon --#Jeeves
 addon=LibStub("LibInit"):NewAddon(ns,me,'AceHook-3.0','AceEvent-3.0','AceTimer-3.0')
@@ -22,8 +23,6 @@ local debug=ns.debug or print
 --
 local D=LibStub("LibDeformat-3.0")
 local I=LibStub("LibItemUpgradeInfo-1.0")
-print("Loaded",I)
-print(I.GetCachingItemInfo)
 ----------------------------------------------
 -- upvalues
 local _G=_G
@@ -229,14 +228,14 @@ function addon:AskEquip(itemlink)
 	end
 	if (not itemlink) then return end
 --@debug@
-print(GetItemInfo(itemlink))
+	pp("AskEquip",itemlink)
 --@end-debug@
 	average=GetAverageItemLevel()
 	if (IsEquippableItem(itemlink) and GetItemInfo(itemlink,3) >= self:GetNumber('MINQUAL') and self:ValidArmorClass(itemlink)) then
-		local perc=self:Compare(GetItemInfo(itemlink,4),GetItemInfo(itemlink,9))
+		local perc=self:Compare(I:GetUpgradedItemLevel(itemlink),GetItemInfo(itemlink,9))
 		if (perc<self:GetNumber('MINLEVEL')) then
 		--@debug@
-print(itemlink,"failed perc",perc)
+pp(itemlink,"failed perc",perc,I:GetUpgradedItemLevel(itemlink))
 --@end-debug@
 			return
 		end
@@ -301,6 +300,7 @@ function addon:ShowEquipRequest(itemlink)
 	end
 	if (not itemlink) then itemlink=pop() end
 	if (not itemlink) then return end
+	local level=I:GetUpgradedItemLevel(itemlink)
 	jeeves.itemlink=itemlink
 	jeeves.iteminfo=jeeves.iteminfo or {}
 	if (not jeeves.itemlink) then jeeves:Hide() return end
@@ -311,8 +311,8 @@ function addon:ShowEquipRequest(itemlink)
 	--local name,_,q,ilevel=GetItemInfo(80753)
 	local n=self:GetNumber("LOOK")
 	LootWonAlertFrame_SetUp(jeeves,itemlink,nil,nil,nil,nil,nil,n==2,n==3 and 10 or nil)
-	jeeves.Label:SetFormattedText(ITEM_LEVEL,iteminfo[4])
-	jeeves.Label:SetTextColor(self:ChooseColor(iteminfo,jeeves))
+	jeeves.Label:SetFormattedText(ITEM_LEVEL,level)
+	jeeves.Label:SetTextColor(self:ChooseColor(level,iteminfo[9]))
 	AlertFrame_AnimateIn(jeeves);
 	AlertFrame_StopOutAnimation(jeeves)
 end
@@ -356,10 +356,9 @@ function addon:HasArmorClass(itemlink)
 		end
 end
 -- Ugly, but i dont have another quick way to mark this item for more than 1 slot
-function addon:ChooseColor(iteminfo)
+function addon:ChooseColor(level,loc)
 
-	local nuovo=iteminfo[4] -- We assume that no item can drop already upgraded
-	local perc=self:Compare(iteminfo[4],iteminfo[9])
+	local perc=self:Compare(level,loc)
 	local difficulty='impossible'
 	if (perc < 90) then
 			difficulty='trivial'
@@ -381,7 +380,7 @@ function addon:Compare(level,loc)
 						slot2 and GetInventoryItemLink("player",slot2) or nil
 				)
 --@debug@
-print("Compare:",loc,slot1,slot2,level,corrente,GetInventoryItemLink("player",slot1),slot2 and GetInventoryItemLink("player",slot2) or nil)
+pp("Compare:",loc,slot1,slot2,level,corrente,GetInventoryItemLink("player",slot1),slot2 and GetInventoryItemLink("player",slot2) or nil)
 --@end-debug@
 	return level/(corrente or 1)*100
 end
@@ -429,9 +428,10 @@ print(armorLink,armorClass)
 			end
 			local questItem=_G["QuestInfoRewardsFrameQuestInfoItem"..i]
 			if (self:GetBoolean('DIM')) then
+				local newlevel=I:GetUpgradedItemLevel(itemlink)
 				if (not self:ValidArmorClass(itemlink)) then
 					SetItemButtonDesaturated(questItem, true);
-				elseif (self:Compare(GetItemInfo(itemlink,4),GetItemInfo(itemlink,9))<self:GetNumber("MINLEVEL")) then
+				elseif (self:Compare(newlevel,GetItemInfo(itemlink,9))<self:GetNumber("MINLEVEL")) then
 					SetItemButtonDesaturated(questItem, true);
 				else
 					SetItemButtonDesaturated(questItem, false);

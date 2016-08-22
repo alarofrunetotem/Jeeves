@@ -9,6 +9,7 @@ Whenever you drop an interesting item, Jeeves offers you the chance to wear it a
 * Preselects the item with the highest vendor value
 
 == Release notes ==
+* 1.5.0 Item level calculation now fixed for Legion
 * 1.4.0 Legion compatible (you need to enable out of date addons or manually change toc to 70000
 * 1.2.0 Feature: Considers also item directly pushed in inventory (like Missions rewards)
 * 1.1.1 Fix: Quest rewards are now correctly proposed even if quest has only one choice
