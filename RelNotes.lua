@@ -15,6 +15,10 @@ ones not your armor class.
 Note, I reccomend OneChoice to improve you quest reward selection experience
 
 ]])
+self:RelNotes(1,3,0,[[
+Toc: 7.1.0
+Feature: Improved armor class recognition
+]])
 self:RelNotes(1,2,0,[[
 Feature: Considers also item directly pushed in inventory (like Missions rewards)
 ]])
