@@ -78,6 +78,20 @@ local armorClass=nil
 local _G=_G
 local autoitem=1
 local wearqueue={}
+local armorClasses= {
+	["WARRIOR"] = LE_ITEM_ARMOR_PLATE,
+	["PALADIN"] = LE_ITEM_ARMOR_PLATE,
+	["HUNTER"] = LE_ITEM_ARMOR_MAIL,
+	["ROGUE"] = LE_ITEM_ARMOR_LEATHER,
+	["PRIEST"] = LE_ITEM_ARMOR_CLOTH,
+	["DEATHKNIGHT"] = LE_ITEM_ARMOR_LEATHER,
+	["SHAMAN"] = LE_ITEM_ARMOR_MAIL,
+	["MAGE"] = LE_ITEM_ARMOR_CLOTH,
+	["WARLOCK"] = LE_ITEM_ARMOR_CLOTH,
+	["MONK"] = LE_ITEM_ARMOR_LEATHER,
+	["DRUID"] = LE_ITEM_ARMOR_LEATHER,
+	["DEMONHUNTER"] = LE_ITEM_ARMOR_MAIL,
+};
 local function push(itemlink)
 	tinsert(wearqueue,itemlink)
 end
@@ -140,11 +154,6 @@ function addon:redo()
 end
 
 function addon:CHAT_MSG_LOOT(evt,p1,...)
-	--@debug@
-	if toc>=70000 then
-		print(evt,p1,...)
-	end
---@end-debug@
 	local newLink=D.Deformat(p1,LOOT_ITEM_SELF)
 	if not newLink then newLink=D.Deformat(p1,LOOT_ITEM_PUSHED_SELF) end
 	if not newLink then newLink=p1:match("|Hitem.*|h") end
@@ -189,6 +198,9 @@ print("Clicked",button,opt)
 	if (button=="LeftButton") then
 		local autoWear= not ((slotTable[GetItemInfo(this.itemlink,9)]).double)
 		if (autoWear) then
+			--@debug@
+			print("EquipByName",this.itemlink)
+			--@end-debug@
 			EquipItemByName(this.itemlink)
 		else
 			local foundid,bag,slot=self:ScanBags(0,addon:GetItemID(this.itemlink))
@@ -379,27 +391,16 @@ function addon:Compare(level,loc)
 						GetInventoryItemLink("player",slot1),
 						slot2 and GetInventoryItemLink("player",slot2) or nil
 				)
---@debug@
-pp("Compare:",loc,slot1,slot2,level,corrente,GetInventoryItemLink("player",slot1),slot2 and GetInventoryItemLink("player",slot2) or nil)
---@end-debug@
 	return level/(corrente or 1)*100
 end
 function addon:ValidArmorClass(itemlink)
+
 	if (self:HasArmorClass(itemlink)) then
 		if (not armorClass) then
-			armorClass=GetInventoryItemLink("player",INVSLOT_CHEST)
-			if (not armorClass) then
-				armorClass=GetInventoryItemLink("player",INVSLOT_LEGS)
-			end
-			if (armorClass) then
-				armorClass=GetItemInfo(armorClass,7)
-			end
+			armorClass=armorClasses[select(2,UnitClass("player"))]
 		end
 		if (armorClass) then
-		--@debug@
-print('ValidArmorClass',armorClass,GetItemInfo(itemlink,7))
---@end-debug@
-			return armorClass==GetItemInfo(itemlink,7)
+			return armorClass==GetItemInfo(itemlink,13)
 		end
 	else
 		return true
@@ -412,12 +413,6 @@ function addon:PreSelectReward()
 	if (armorLink) then
 		armorClass=GetItemInfo(armorLink,7)
 	end
---@debug@
-print("--------------------",self:GetBoolean('DIM'))
---@end-debug@
---@debug@
-print(armorLink,armorClass)
---@end-debug@
 	for i=1,GetNumQuestChoices() do
 		local itemlink = GetQuestItemLink("choice",i);
 		if itemlink then
@@ -449,10 +444,6 @@ print(armorLink,armorClass)
 	end
 end
 function addon:OnInitialized()
---@debug@
-print(I)
-print(GetItemInfo)
---@end-debug@
 	if type(I.GetCachingGetItemInfo)=="function" then
 		GetItemInfo=I:GetCachingGetItemInfo()
 	else
@@ -464,9 +455,6 @@ print(GetItemInfo)
 			end
 		end
 	end
---@debug@
-print(GetItemInfo)
---@end-debug@
 	OneChoice=IsAddOnLoaded("OneChoice")
 	GetItemInfo(6256)
 	self:ShowEquipRequest()
