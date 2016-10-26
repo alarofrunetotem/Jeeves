@@ -15,7 +15,7 @@ ones not your armor class.
 Note, I reccomend OneChoice to improve you quest reward selection experience
 
 ]])
-self:RelNotes(1,3,0,[[
+self:RelNotes(1,4,2,[[
 Toc: 7.1.0
 Feature: Improved armor class recognition
 ]])
