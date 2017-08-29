@@ -8,11 +8,12 @@ self:HF_Pre([[
 Jeeves assists you in dressing
 
 Whenever you acquire a new item suitable to upgrade your current equipment,
-Jeeves proposes you a quick button to wear it
+Jeeves proposes you a quick button to wear it.
+If you are an enchanter, shift-clicking the button will disenchant the item
 You can customize button appearance and minimum item quality and level under which items are ignored
-Jeeves also helps you in choosing quest rewards by poreselecting the best selling item and graying out
+Jeeves also helps you in choosing quest rewards by preselecting the best selling item and graying out
 ones not your armor class.
-Note, I reccomend OneChoice to improve you quest reward selection experience
+Note, I recommend OneChoice to improve you quest reward selection experience
 
 ]])
 self:RelNotes(1,4,2,[[
