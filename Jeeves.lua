@@ -161,16 +161,22 @@ function addon:CHAT_MSG_LOOT(evt,p1,...)
 	local rc,name,itemlink,rarity,level,minlevel,type,subtype,count,loc,texture,price=pcall(GetItemInfo,newLink)
 	--@debug@
 	if (not rc) then
-		--print(p1, "has not a valid itemlink:",newLink)
+		pp(p1, "has not a valid itemlink:",newLink)
 	else
-		--print(p1, "got",newLink)
+		pp(p1, "got",newLink)
 	end
 	--@end-debug@
 	if (loc and loc~='') then
-		--@debug@
-print("Dropped equippable object",name,loc,_G[loc])
+		if (GetItemCount(itemlink)>0) then
+--@debug@
+			pp("Dropped equippable object ",name,loc,_G[loc])
 --@end-debug@
-			self:AskEquip(itemlink)
+			self:ScheduleTimer("AskEquip",0.2,itemlink)
+		else
+--@debug@
+			pp("You dont have ",name)
+--@end-debug@
+		end
 	end
 end
 function addon:UNIT_INVENTORY_CHANGED(event,unit)
@@ -180,26 +186,26 @@ function addon:GetQuestReward(choice)
 	if (not choice or choice==0) then choice=1 end
 	local itemlink=GetQuestItemLink("choice",choice)
 --@debug@
-print("Assegnato reward",itemlink, "from",choice)
+pp("Assegnato reward",itemlink, "from",choice)
 --@end-debug@
 	self:AskEquip(itemlink)
 end
 function addon:BuyMerchantItem(choice)
 	local itemlink=GetMerchantItemLink(choice)
 --@debug@
-print("Acquistato oggetto",itemlink)
+pp("Acquistato oggetto",itemlink)
 --@end-debug@
 	self:AskEquip(itemlink)
 end
 function addon:OnClick(this,button,opt)
 --@debug@
-print("Clicked",button,opt)
+pp("Clicked",button,opt)
 --@end-debug@
 	if (button=="LeftButton") then
 		local autoWear= not ((slotTable[GetItemInfo(this.itemlink,9)]).double)
 		if (autoWear) then
 			--@debug@
-			print("EquipByName",this.itemlink)
+			pp("EquipByName",this.itemlink)
 			--@end-debug@
 			EquipItemByName(this.itemlink)
 		else
@@ -246,9 +252,9 @@ function addon:AskEquip(itemlink)
 	if (IsEquippableItem(itemlink) and GetItemInfo(itemlink,3) >= self:GetNumber('MINQUAL') and self:ValidArmorClass(itemlink)) then
 		local perc=self:Compare(I:GetUpgradedItemLevel(itemlink),GetItemInfo(itemlink,9))
 		if (perc<self:GetNumber('MINLEVEL')) then
-		--@debug@
-pp(itemlink,"failed perc",perc,I:GetUpgradedItemLevel(itemlink))
---@end-debug@
+			--@debug@
+			pp(itemlink,"failed perc",perc,I:GetUpgradedItemLevel(itemlink))
+			--@end-debug@
 			return
 		end
 		lastitem=itemlink
