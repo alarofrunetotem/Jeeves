@@ -332,7 +332,7 @@ function addon:ShowEquipRequest(itemlink)
 	jeeves.Label:SetFormattedText(ITEM_LEVEL,level)
 	jeeves.Label:SetTextColor(self:ChooseColor(level,iteminfo[9]))
 	AlertFrame_AnimateIn(jeeves);
-	AlertFrame_StopOutAnimation(jeeves)
+	--AlertFrame_StopOutAnimation(jeeves)
 end
 function addon:LowestLevel(itemlink1,itemlink2)
 --@debug@
