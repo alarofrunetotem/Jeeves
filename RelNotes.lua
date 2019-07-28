@@ -16,6 +16,9 @@ ones not your armor class.
 Note, I recommend OneChoice to improve you quest reward selection experience
 
 ]])
+self:RelNotes(1,4,4,[[
+Toc: 8.2.0
+]])
 self:RelNotes(1,4,3,[[
 Toc: 7.3.0
 ]])
