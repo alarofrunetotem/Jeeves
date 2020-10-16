@@ -1,4 +1,4 @@
-## Interface: 80300
+## Interface: 90001
 ## Title: Jeeves
 ## Notes: Offers a quick way to wear just dropped eq
 ## Notes-itIT: Ti propone di indossare gli oggetti che droppi
