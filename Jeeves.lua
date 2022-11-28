@@ -148,6 +148,7 @@ function addon:demo()
 	lastitem=nil
 end
 function addon:redo()
+  self:Print(lastitem)
 	if (lastitem) then
 		self:AskEquip(lastitem)
 	end
