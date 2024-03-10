@@ -9,7 +9,7 @@
 		</Anchors>
 		<Scripts>
 			<OnLoad>
-				self:RegisterForDrag("LeftButton")
+				self:RegisterForDrag("LeftButton") --
 				self:RegisterForClicks("AnyUp")
 			</OnLoad>
 			<OnDragStart>

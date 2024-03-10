@@ -4,8 +4,8 @@ local me, ns = ...
 local version,build,releaseDate,toc=GetBuildInfo()
 local pp=print
 --@debug@
-LoadAddOn("Blizzard_DebugTools")
-LoadAddOn("LibDebug")
+C_AddOns.LoadAddOn("Blizzard_DebugTools")
+C_AddOns.LoadAddOn("LibDebug")
 if LibDebug then LibDebug() ns.print=print end
 --@end-debug@
 --[===[@non-debug@
@@ -43,9 +43,9 @@ local SetItemButtonCount=SetItemButtonCount
 local GetItemInfo=GetItemInfo
 local GetQuestItemLink=GetQuestItemLink
 local GetMerchantItemLink=GetMerchantItemLink
-local GetContainerNumSlots=GetContainerNumSlots
-local GetContainerItemID=GetContainerItemID
-local PickupContainerItem=PickupContainerItem
+local GetContainerNumSlots=C_Container.GetContainerNumSlots
+local GetContainerItemID=C_Container.GetContainerItemID
+local PickupContainerItem=C_Container.PickupContainerItem
 local ToggleCharacter=ToggleCharacter
 local GameTooltip_ShowCompareItem=GameTooltip_ShowCompareItem
 local GameTooltip=GameTooltip
