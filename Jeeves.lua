@@ -1,4 +1,5 @@
-local __FILE__=tostring(debugstack(1,2,0):match("(.*):1:")) -- MUST BE LINE 1
+---@diagnostic disable-next-line: undefined-field
+local __FILE__=tostring(debugstack(1,2,0):match("(.*):2:")) -- MUST BE LINE 2
 local toc=select(4,GetBuildInfo())
 local me, ns = ...
 local version,build,releaseDate,toc=GetBuildInfo()
@@ -6,6 +7,7 @@ local pp=print
 --@debug@
 C_AddOns.LoadAddOn("Blizzard_DebugTools")
 C_AddOns.LoadAddOn("LibDebug")
+---@diagnostic disable-next-line: undefined-global
 if LibDebug then LibDebug() ns.print=print end
 --@end-debug@
 --[===[@non-debug@
@@ -40,7 +42,7 @@ local tonumber=tonumber
 local type=type
 local SetItemButtonTexture= SetItemButtonTexture
 local SetItemButtonCount=SetItemButtonCount
-local GetItemInfo=GetItemInfo
+local GetItemInfo=C_Item.GetItemInfo
 local GetQuestItemLink=GetQuestItemLink
 local GetMerchantItemLink=GetMerchantItemLink
 local GetContainerNumSlots=C_Container.GetContainerNumSlots
@@ -54,7 +56,7 @@ local CursorUpdate=CursorUpdate
 local ResetCursor=ResetCursor
 local CreateFrame=CreateFrame
 local LOOT_ITEM_SELF=LOOT_ITEM_SELF
-local GetItemQualityColor=GetItemQualityColor
+local GetItemQualityColor=C_Item.GetItemQualityColor
 local QuestDifficultyColors=QuestDifficultyColors
 local GetInventoryItemLink=GetInventoryItemLink
 local GetNumQuestChoices=GetNumQuestChoices
@@ -168,7 +170,7 @@ function addon:CHAT_MSG_LOOT(evt,p1,...)
 	end
 	--@end-debug@
 	if (loc and loc~='') then
-		if (GetItemCount(itemlink)>0) then
+		if (C_Item.GetItemCount(itemlink)>0) then
 --@debug@
 			pp("Dropped equippable object ",name,loc,_G[loc])
 --@end-debug@
@@ -208,7 +210,7 @@ pp("Clicked",button,opt)
 			--@debug@
 			pp("EquipByName",this.itemlink)
 			--@end-debug@
-			EquipItemByName(this.itemlink)
+			C_Item.EquipItemByName(this.itemlink)
 		else
 			local foundid,bag,slot=self:ScanBags(0,addon:GetItemID(this.itemlink))
 		--@debug@
@@ -250,7 +252,7 @@ function addon:AskEquip(itemlink)
 	pp("AskEquip",itemlink)
 --@end-debug@
 	average=GetAverageItemLevel()
-	if (IsEquippableItem(itemlink) and GetItemInfo(itemlink,3) >= self:GetNumber('MINQUAL') and self:ValidArmorClass(itemlink)) then
+	if (C_Item.IsEquippableItem(itemlink) and GetItemInfo(itemlink,3) >= self:GetNumber('MINQUAL') and self:ValidArmorClass(itemlink)) then
 		local perc=self:Compare(I:GetUpgradedItemLevel(itemlink),GetItemInfo(itemlink,9))
 		if (perc<self:GetNumber('MINLEVEL')) then
 			--@debug@
@@ -416,10 +418,6 @@ function addon:ValidArmorClass(itemlink)
 end
 function addon:PreSelectReward()
 	local price,id;
-	local armorLink,armorClass=GetInventoryItemLink("player",GetInventorySlotInfo('ChestSlot')),nil
-	if (armorLink) then
-		armorClass=GetItemInfo(armorLink,7)
-	end
 	for i=1,GetNumQuestChoices() do
 		local itemlink = GetQuestItemLink("choice",i);
 		if itemlink then
@@ -456,13 +454,13 @@ function addon:OnInitialized()
 	else
 		GetItemInfo=function(link,index)
 			if index then
-				return select(index,_G.GetItemInfo(link))
+				return select(index,C_Item.GetItemInfo(link))
 			else
-				return _G.GetItemInfo(link)
+				return C_Item.GetItemInfo(link)
 			end
 		end
 	end
-	OneChoice=IsAddOnLoaded("OneChoice")
+	OneChoice=C_AddOns.IsAddOnLoaded("OneChoice")
 	GetItemInfo(6256)
 	self:ShowEquipRequest()
 	local qselection={}
