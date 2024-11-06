@@ -42,7 +42,7 @@ local tonumber=tonumber
 local type=type
 local SetItemButtonTexture= SetItemButtonTexture
 local SetItemButtonCount=SetItemButtonCount
-local GetItemInfo=C_Item.GetItemInfo
+local GetItemInfo=function(a,b) end
 local GetQuestItemLink=GetQuestItemLink
 local GetMerchantItemLink=GetMerchantItemLink
 local GetContainerNumSlots=C_Container.GetContainerNumSlots
@@ -81,18 +81,18 @@ local _G=_G
 local autoitem=1
 local wearqueue={}
 local armorClasses= {
-	["WARRIOR"] = LE_ITEM_ARMOR_PLATE,
-	["PALADIN"] = LE_ITEM_ARMOR_PLATE,
-	["HUNTER"] = LE_ITEM_ARMOR_MAIL,
-	["ROGUE"] = LE_ITEM_ARMOR_LEATHER,
-	["PRIEST"] = LE_ITEM_ARMOR_CLOTH,
-	["DEATHKNIGHT"] = LE_ITEM_ARMOR_LEATHER,
-	["SHAMAN"] = LE_ITEM_ARMOR_MAIL,
-	["MAGE"] = LE_ITEM_ARMOR_CLOTH,
-	["WARLOCK"] = LE_ITEM_ARMOR_CLOTH,
-	["MONK"] = LE_ITEM_ARMOR_LEATHER,
-	["DRUID"] = LE_ITEM_ARMOR_LEATHER,
-	["DEMONHUNTER"] = LE_ITEM_ARMOR_MAIL,
+	["WARRIOR"] = Enum.ItemArmorSubclass.Plate,
+	["PALADIN"] = Enum.ItemArmorSubclass.Plate,
+	["HUNTER"] = Enum.ItemArmorSubclass.Mail,
+	["ROGUE"] = Enum.ItemArmorSubclass.Leather,
+	["PRIEST"] = Enum.ItemArmorSubclass.Cloth,
+	["DEATHKNIGHT"] = Enum.ItemArmorSubclass.Plate,
+	["SHAMAN"] = Enum.ItemArmorSubclass.Mail,
+	["MAGE"] = Enum.ItemArmorSubclass.Cloth,
+	["WARLOCK"] = Enum.ItemArmorSubclass.Cloth,
+	["MONK"] = Enum.ItemArmorSubclass.Leather,
+	["DRUID"] = Enum.ItemArmorSubclass.Leather,
+	["DEMONHUNTER"] = Enum.ItemArmorSubclass.Mail,
 };
 local function push(itemlink)
 	tinsert(wearqueue,itemlink)
@@ -170,6 +170,7 @@ function addon:CHAT_MSG_LOOT(evt,p1,...)
 	end
 	--@end-debug@
 	if (loc and loc~='') then
+---@diagnostic disable-next-line: param-type-mismatch
 		if (C_Item.GetItemCount(itemlink)>0) then
 --@debug@
 			pp("Dropped equippable object ",name,loc,_G[loc])
@@ -274,6 +275,7 @@ function addon:APPLY(...)
 print("Apply",...)
 --@end-debug@
 end
+---@diagnostic disable-next-line: undefined-field
 local AlertFrame_AnimateIn=_G.AlertFrame_AnimateIn
 if not AlertFrame_AnimateIn then
 -- Legion change
@@ -505,4 +507,5 @@ function addon:OnDisabled()
 	self:UnregisterAll()
 	self:UnhokAll()
 end
+---@diagnostic disable-next-line: inject-field
 _G.JVS=addon
