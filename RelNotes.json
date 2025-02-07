@@ -1,0 +1,169 @@
+{
+    "NOTES": {
+        "k011401": {
+            "major": "1",
+            "minor": "14",
+            "patch": "1",
+            "description": [
+                {
+                    "tag": "Toc",
+                    "info": "11.0.7"
+                }
+            ]
+        },
+        "k011400": {
+            "major": "1",
+            "minor": "14",
+            "patch": "0",
+            "description": [
+                {
+                    "tag": "Toc",
+                    "info": "11.0.5"
+                }
+            ]
+        },
+        "k011301": {
+            "major": "1",
+            "minor": "13",
+            "patch": "1",
+            "description": [
+                {
+                    "tag": "Toc",
+                    "info": "11.0.0, 11.0.2"
+                }
+            ]
+        },
+        "k011200": {
+            "major": "1",
+            "minor": "12",
+            "patch": "0",
+            "description": [
+                {
+                    "tag": "Toc",
+                    "info": "10.2.7"
+                }
+            ]
+        },
+        "k010409": {
+            "major": "1",
+            "minor": "4",
+            "patch": "9",
+            "description": [
+                {
+                    "tag": "Toc",
+                    "info": "8.3.0"
+                }
+            ]
+        },
+        "k010408": {
+            "major": "1",
+            "minor": "4",
+            "patch": "8",
+            "description": [
+                {
+                    "tag": "Toc",
+                    "info": "8.2.5"
+                }
+            ]
+        },
+        "k010407": {
+            "major": "1",
+            "minor": "4",
+            "patch": "7",
+            "description": [
+                {
+                    "tag": "Toc",
+                    "info": "8.2.0"
+                }
+            ]
+        },
+        "k010403": {
+            "major": "1",
+            "minor": "4",
+            "patch": "3",
+            "description": [
+                {
+                    "tag": "Toc",
+                    "info": "7.3.0"
+                }
+            ]
+        },
+        "k010402": {
+            "major": "1",
+            "minor": "4",
+            "patch": "2",
+            "description": [
+                {
+                    "tag": "Toc",
+                    "info": "7.1.0"
+                },
+                {
+                    "tag": "Feature",
+                    "info": "Improved armor class recognition"
+                }
+            ]
+        },
+        "k010200": {
+            "major": "1",
+            "minor": "2",
+            "patch": "0",
+            "description": [
+                {
+                    "tag": "Feature",
+                    "info": "Considers also item directly pushed in inventory (like Missions rewards)"
+                }
+            ]
+        },
+        "k010101": {
+            "major": "1",
+            "minor": "1",
+            "patch": "1",
+            "description": [
+                {
+                    "tag": "Fix",
+                    "info": "Quest rewards are now correctly proposed even if quest has only one choice"
+                }
+            ]
+        },
+        "k010001": {
+            "major": "1",
+            "minor": "0",
+            "patch": "1",
+            "description": [
+                {
+                    "tag": "Fix",
+                    "info": "Quest rewards are now correctly grayed out"
+                }
+            ]
+        },
+        "k010000": {
+            "major": "1",
+            "minor": "0",
+            "patch": "0",
+            "description": [
+                {
+                    "tag": "Feature",
+                    "info": "Initial release"
+                }
+            ]
+        }
+    },
+    "PARAGRAPHS": [
+        "Description"
+    ],
+    "TITLE": {
+        "addon": "Jeeves",
+        "title": "RELNOTES"
+    },
+    "PRE": [
+        "Jeeves assists you in dressing",
+        "",
+        "Whenever you acquire a new item suitable to upgrade your current equipment,",
+        "Jeeves proposes you a quick button to wear it.",
+        "If you are an enchanter, shift-clicking the button will disenchant the item",
+        "You can customize button appearance and minimum item quality and level under which items are ignored",
+        "Jeeves also helps you in choosing quest rewards by preselecting the best selling item and graying out",
+        "ones not your armor class.",
+        "Note, I recommend OneChoice to improve you quest reward selection experience"
+    ]
+}
