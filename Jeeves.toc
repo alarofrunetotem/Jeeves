@@ -1,4 +1,4 @@
-## Interface: 110007, 110100
+## Interface: 110105, 110107
 ## Title: Jeeves
 ## IconTexture: Interface\Icons\inv_boastfulsquire_hd
 ## Notes: Offers a quick way to wear just dropped eq
