@@ -3,66 +3,43 @@ local __FILE__=tostring(debugstack(1,2,0):match("(.*):2:")) -- MUST BE LINE 2
 local toc=select(4,GetBuildInfo())
 local me, ns = ...
 local version,build,releaseDate,toc=GetBuildInfo()
-local pp=print
 --@debug@
 C_AddOns.LoadAddOn("Blizzard_DebugTools")
 C_AddOns.LoadAddOn("LibDebug")
 ---@diagnostic disable-next-line: undefined-global
-if LibDebug then LibDebug() ns.print=print end
---@end-debug@
---[===[@non-debug@
-ns.print=function() end
-pp=ns.print
---@end-non-debug@]===]
+if LibDebug then LibDebug() end
 local addon --#Jeeves
 addon=LibStub("LibInit"):NewAddon(ns,me,'AceHook-3.0','AceEvent-3.0','AceTimer-3.0')
 local L=addon:GetLocale()
-local C=addon:GetColorTable()
-local print=ns.print or print
-local debug=ns.debug or print
+--@debug@
+addon.debug = true
+addon:EnableDebug()
+addon:Debug("Started with debug enabled")
+--@end-debug@
 ----------------------------------------------
 -- Library loading
 --
 local D=LibStub("LibDeformat-3.0")
-local I=LibStub("LibItemUpgradeInfo-1.0")
 ----------------------------------------------
 -- upvalues
 local _G=_G
 local setmetatable=setmetatable
-local next=next
 local pairs=pairs
-local wipe=wipe
-local format=format
-local GetTime=GetTime
-local strjoin=strjoin
-local strspilit=strsplit
-local tostringall=tostringall
-local tostring=tostring
 local tonumber=tonumber
-local type=type
-local SetItemButtonTexture= SetItemButtonTexture
-local SetItemButtonCount=SetItemButtonCount
 local GetItemInfo=function(a,b) end
 local GetQuestItemLink=GetQuestItemLink
 local GetMerchantItemLink=GetMerchantItemLink
-local GetContainerNumSlots=C_Container.GetContainerNumSlots
-local GetContainerItemID=C_Container.GetContainerItemID
 local PickupContainerItem=C_Container.PickupContainerItem
 local ToggleCharacter=ToggleCharacter
 local GameTooltip_ShowCompareItem=GameTooltip_ShowCompareItem
 local GameTooltip=GameTooltip
 local CharacterFrame=CharacterFrame
 local CursorUpdate=CursorUpdate
-local ResetCursor=ResetCursor
-local CreateFrame=CreateFrame
 local LOOT_ITEM_SELF=LOOT_ITEM_SELF
-local GetItemQualityColor=C_Item.GetItemQualityColor
 local QuestDifficultyColors=QuestDifficultyColors
 local GetInventoryItemLink=GetInventoryItemLink
 local GetNumQuestChoices=GetNumQuestChoices
 local QuestInfoItem_OnClick=QuestInfoItem_OnClick
-local SetItemButtonTextureVertexColor=SetItemButtonTextureVertexColor
-local SetItemButtonNameFrameVertexColor=SetItemButtonNameFrameVertexColor
 local SetItemButtonDesaturated=SetItemButtonDesaturated
 local GetAverageItemLevel=GetAverageItemLevel
 local InCombatLockdown=InCombatLockdown
@@ -132,6 +109,7 @@ local slotTable=setmetatable({},{
 
 --@debug@
 function addon:test(item)
+
 	item=tonumber(item)
 	if (not item) then
 		item=autoitem
@@ -157,6 +135,7 @@ function addon:redo()
 end
 
 function addon:CHAT_MSG_LOOT(evt,p1,...)
+	self:Debug("CHAT_MSG_LOOT",p1,...)
 	local newLink=D.Deformat(p1,LOOT_ITEM_SELF)
 	if not newLink then newLink=D.Deformat(p1,LOOT_ITEM_PUSHED_SELF) end
 	if not newLink then newLink=p1:match("|Hitem.*|h") end
@@ -164,21 +143,21 @@ function addon:CHAT_MSG_LOOT(evt,p1,...)
 	local rc,name,itemlink,rarity,level,minlevel,type,subtype,count,loc,texture,price=pcall(GetItemInfo,newLink)
 	--@debug@
 	if (not rc) then
-		pp(p1, "has not a valid itemlink:",newLink)
+		self:Debug(p1, "has not a valid itemlink:",newLink)
 	else
-		pp(p1, "got",newLink)
+		self:Debug(p1, "got",newLink)
 	end
 	--@end-debug@
 	if (loc and loc~='') then
 ---@diagnostic disable-next-line: param-type-mismatch
 		if (C_Item.GetItemCount(itemlink)>0) then
 --@debug@
-			pp("Dropped equippable object ",name,loc,_G[loc])
+			self:Debug("Dropped equippable object ",name,loc,_G[loc])
 --@end-debug@
 			self:ScheduleTimer("AskEquip",0.2,itemlink)
 		else
 --@debug@
-			pp("You dont have ",name)
+			self:Debug("You dont have ",name)
 --@end-debug@
 		end
 	end
@@ -190,37 +169,47 @@ function addon:GetQuestReward(choice)
 	if (not choice or choice==0) then choice=1 end
 	local itemlink=GetQuestItemLink("choice",choice)
 --@debug@
-pp("Assegnato reward",itemlink, "from",choice)
+self:Debug("Assegnato reward",itemlink, "from",choice)
 --@end-debug@
 	self:AskEquip(itemlink)
 end
-function addon:BuyMerchantItem(choice)
+function addon:BuyMerchantItem(choice,quantity)
+	if (not quantity) then quantity=1 end
 	local itemlink=GetMerchantItemLink(choice)
 --@debug@
-pp("Acquistato oggetto",itemlink)
+self:Debug("Acquistato oggetto",itemlink,quantity)
 --@end-debug@
 	self:AskEquip(itemlink)
+end
+function addon:BuybackItem(choice)
+
+	local itemID=C_MerchantFrame.GetBuybackItemID(choice)
+	local itemName,itemLink,itemQuality,itemLevel=C_Item.GetItemInfo(itemID)
+--@debug@
+self:Debug("Riacquistato oggetto",choice,itemID,itemName,itemLink,itemQuality,itemLevel)
+--@end-debug@
+	self:AskEquip(itemLink)
 end
 function addon:OnClick(this,button,opt)
 --@debug@
-pp("Clicked",button,opt)
+self:Debug("Clicked",button,opt)
 --@end-debug@
 	if (button=="LeftButton") then
 		local autoWear= not ((slotTable[GetItemInfo(this.itemlink,9)]).double)
 		if (autoWear) then
 			--@debug@
-			pp("EquipByName",this.itemlink)
+			self:Debug("EquipByName",this.itemlink)
 			--@end-debug@
 			C_Item.EquipItemByName(this.itemlink)
 		else
 			local foundid,bag,slot=self:ScanBags(0,addon:GetItemID(this.itemlink))
 		--@debug@
-print(foundid,bag,slot)
+		self:Debug(foundid,bag,slot)
 --@end-debug@
 			if (bag and slot) then
 				PickupContainerItem(bag,slot)
 			--@debug@
-print("Will equip ",this.iteminfo[1])
+			self:Debug("Will equip ",this.iteminfo[1])
 --@end-debug@
 				if (not CharacterFrame:IsShown()) then
 					ToggleCharacter("PaperDollFrame")
@@ -244,20 +233,33 @@ function addon:ToolTip(this)
 					GameTooltip_ShowCompareItem(GameTooltip);
 					CursorUpdate(this);
 end
+local function getitemLevelFromLink(itemlink)
+	addon:Debug("getitemLevelFromLink",itemlink)
+	local item = Item:CreateFromItemLink(itemlink)
+	addon:Debug("getitemLevelFromLink",item:GetCurrentItemLevel())
+	return item:GetCurrentItemLevel()
+end
 function addon:AskEquip(itemlink)
 	if (not itemlink) then
 		itemlink=pop()
 	end
 	if (not itemlink) then return end
 --@debug@
-	pp("AskEquip",itemlink)
+	self:Debug("AskEquip",itemlink)
 --@end-debug@
 	average=GetAverageItemLevel()
+	self:Debug("average",average)
+	self:Debug("MINQUAL",self:GetNumber('MINQUAL'))
+	self:Debug("ValidArmorClass",self:ValidArmorClass(itemlink))
+	self:Debug("IsEquippableItem",C_Item.IsEquippableItem(itemlink))
+	self:Debug("ItemQuality",GetItemInfo(itemlink,3),'')
+	self:Debug("ItemInfo",GetItemInfo(itemlink,9))
+	self:Debug("MINLEVEL",self:GetNumber('MINLEVEL'))
 	if (C_Item.IsEquippableItem(itemlink) and GetItemInfo(itemlink,3) >= self:GetNumber('MINQUAL') and self:ValidArmorClass(itemlink)) then
-		local perc=self:Compare(I:GetUpgradedItemLevel(itemlink),GetItemInfo(itemlink,9))
+		local perc=self:Compare(getitemLevelFromLink(itemlink),GetItemInfo(itemlink,9))
 		if (perc<self:GetNumber('MINLEVEL')) then
 			--@debug@
-			pp(itemlink,"failed perc",perc,I:GetUpgradedItemLevel(itemlink))
+			self:Debug(itemlink,"failed perc",perc,level)
 			--@end-debug@
 			return
 		end
@@ -272,7 +274,7 @@ function addon:AskEquip(itemlink)
 end
 function addon:APPLY(...)
 --@debug@
-print("Apply",...)
+	self:Debug("Apply",...)
 --@end-debug@
 end
 ---@diagnostic disable-next-line: undefined-field
@@ -323,7 +325,7 @@ function addon:ShowEquipRequest(itemlink)
 	end
 	if (not itemlink) then itemlink=pop() end
 	if (not itemlink) then return end
-	local level=I:GetUpgradedItemLevel(itemlink)
+	local level=getitemLevelFromLink(itemlink)
 	jeeves.itemlink=itemlink
 	jeeves.iteminfo=jeeves.iteminfo or {}
 	if (not jeeves.itemlink) then jeeves:Hide() return end
@@ -339,29 +341,19 @@ function addon:ShowEquipRequest(itemlink)
 	AlertFrame_AnimateIn(jeeves);
 	--AlertFrame_StopOutAnimation(jeeves)
 end
-function addon:LowestLevel(itemlink1,itemlink2)
---@debug@
-print("Calculating level for",itemlink1,itemlink2)
---@end-debug@
-	local livello1
-	local livello2
-	if (itemlink1) then
-		livello1=I:GetUpgradedItemLevel(itemlink1)
-
-	--@debug@
-print("1",livello1)
---@end-debug@
-	end
-	if (itemlink2) then
-		livello2=I:GetUpgradedItemLevel(itemlink2)
-	--@debug@
-print("2",livello2)
---@end-debug@
-	end
-	if (not livello1) then return livello2 end
-	if (not livello2) then return livello1 end
-	if (livello1>livello2) then return livello2 else return livello1 end
+function addon:LowestLevel(slot1,slot2)
+	local itemLoc = ItemLocation:CreateFromEquipmentSlot(slot)
+	DevTools_Dump(itemLoc)
+	local r,valid=pcall(C_Item.GetCurrentItemLevel,itemLoc)
+	local level1 = r and valid and C_Item.GetCurrentItemLevel(itemLoc) or nil
+	if (not slot2) then return level1 end
+	itemLoc = ItemLocation:CreateFromEquipmentSlot(slot2)
+	local level2 =itemLoc:IsValid() and C_Item.GetCurrentItemLevel(itemLoc)
+	if (not level1) then return level2 end
+	if (not level2) then return level1 end
+	if (level1>level2) then return level2 else return level1 end
 end
+--@debug@
 function addon:HasArmorClass(itemlink)
 	local slot=GetItemInfo(itemlink,9)
 	if (slot=='INVTYPE_HEAD' or
@@ -396,12 +388,10 @@ function addon:ChooseColor(level,loc)
 	return q.r,q.g,q.b
 end
 function addon:Compare(level,loc)
+	self:Debug("Compare",level,loc)
 	local slot1=slotTable[loc].s1
 	local slot2=slotTable[loc].s2
-	local corrente=self:LowestLevel(
-						GetInventoryItemLink("player",slot1),
-						slot2 and GetInventoryItemLink("player",slot2) or nil
-				)
+	local corrente=self:LowestLevel(slot1,slot2)
 	return level/(corrente or 1)*100
 end
 function addon:ValidArmorClass(itemlink)
@@ -430,7 +420,7 @@ function addon:PreSelectReward()
 			end
 			local questItem=_G["QuestInfoRewardsFrameQuestInfoItem"..i]
 			if (self:GetBoolean('DIM')) then
-				local newlevel=I:GetUpgradedItemLevel(itemlink)
+				local newlevel=getitemLevelFromLink(itemlink)
 				if (not self:ValidArmorClass(itemlink)) then
 					SetItemButtonDesaturated(questItem, true);
 				elseif (self:Compare(newlevel,GetItemInfo(itemlink,9))<self:GetNumber("MINLEVEL")) then
@@ -451,15 +441,11 @@ function addon:PreSelectReward()
 	end
 end
 function addon:OnInitialized()
-	if type(I.GetCachingGetItemInfo)=="function" then
-		GetItemInfo=I:GetCachingGetItemInfo()
-	else
-		GetItemInfo=function(link,index)
-			if index then
-				return select(index,C_Item.GetItemInfo(link))
-			else
-				return C_Item.GetItemInfo(link)
-			end
+	GetItemInfo=function(link,index)
+		if index then
+			return select(index,C_Item.GetItemInfo(link))
+		else
+			return C_Item.GetItemInfo(link)
 		end
 	end
 	OneChoice=C_AddOns.IsAddOnLoaded("OneChoice")
@@ -497,11 +483,21 @@ function addon:OnInitialized()
 end
 function addon:OnEnabled()
 	self:RegisterEvent("CHAT_MSG_LOOT")
+	--hooksecurefunc("LootFrame_UpdateButton", function(index)
 	self:SecureHook("GetQuestReward")
 	self:SecureHook("BuyMerchantItem")
+	self:SecureHook("BuybackItem")
+	self:SecureHook("PutItemInBackpack")
+	self:SecureHook("PutItemInBag")
 	self:RegisterEvent("QUEST_COMPLETE","PreSelectReward");
 	self:RegisterEvent("QUEST_ITEM_UPDATE","PreSelectReward");
 	self:RegisterEvent("UNIT_INVENTORY_CHANGED")
+end
+function addon:PutItemInBackpack(...)
+	self:Debug("PutItemInBackpack",...)
+end
+function addon:PutItemInBag(...)
+	self:Debug("PutItemInBag",...)
 end
 function addon:OnDisabled()
 	self:UnregisterAll()

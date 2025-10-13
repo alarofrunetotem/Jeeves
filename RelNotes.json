@@ -1,5 +1,16 @@
 {
     "NOTES": {
+        "k011700": {
+            "major": "1",
+            "minor": "17",
+            "patch": "0",
+            "description": [
+                {
+                    "tag": "Fix",
+                    "info": "work in progress"
+                }
+            ]
+        },
         "k011600": {
             "major": "1",
             "minor": "16",

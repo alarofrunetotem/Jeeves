@@ -1,6 +1,17 @@
 ## Interface: 110200, 110205
 ## Title: Jeeves
 ## IconTexture: Interface\Icons\inv_boastfulsquire_hd
+## Category: Quests
+## Category-deDE: Quests
+## Category-esES: Misiones
+## Category-esMX: Misiones
+## Category-frFR: Quêtes
+## Category-itIT: Missioni
+## Category-koKR: 퀘스트
+## Category-ptBR: Missões
+## Category-ruRU: Задания
+## Category-zhCN: 任务
+## Category-zhTW: 任務
 ## Notes: Offers a quick way to wear just dropped eq
 ## Notes-itIT: Ti propone di indossare gli oggetti che droppi
 ## Author: Alar of Daggerspine
