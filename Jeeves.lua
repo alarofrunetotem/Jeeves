@@ -343,7 +343,6 @@ function addon:ShowEquipRequest(itemlink)
 end
 function addon:LowestLevel(slot1,slot2)
 	local itemLoc = ItemLocation:CreateFromEquipmentSlot(slot)
-	DevTools_Dump(itemLoc)
 	local r,valid=pcall(C_Item.GetCurrentItemLevel,itemLoc)
 	local level1 = r and valid and C_Item.GetCurrentItemLevel(itemLoc) or nil
 	if (not slot2) then return level1 end
@@ -353,7 +352,6 @@ function addon:LowestLevel(slot1,slot2)
 	if (not level2) then return level1 end
 	if (level1>level2) then return level2 else return level1 end
 end
---@debug@
 function addon:HasArmorClass(itemlink)
 	local slot=GetItemInfo(itemlink,9)
 	if (slot=='INVTYPE_HEAD' or
