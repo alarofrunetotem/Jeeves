@@ -17,6 +17,9 @@ ones not your armor class.
 Note, I recommend OneChoice to improve you quest reward selection experience
 ]])
 self:HF_Paragraph('Release Notes')
+self:RelNotes(1,17,1,[[
+Fix: 1x Jeeves/Jeeves.lua
+]])
 self:RelNotes(1,17,0,[[
 Fix: work in progress
 ]])

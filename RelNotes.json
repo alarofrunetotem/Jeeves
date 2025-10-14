@@ -1,5 +1,16 @@
 {
     "NOTES": {
+        "k011701": {
+            "major": "1",
+            "minor": "17",
+            "patch": "1",
+            "description": [
+                {
+                    "tag": "Fix",
+                    "info": "1x Jeeves\/Jeeves.lua"
+                }
+            ]
+        },
         "k011700": {
             "major": "1",
             "minor": "17",
