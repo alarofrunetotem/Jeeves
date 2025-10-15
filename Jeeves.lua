@@ -8,6 +8,7 @@ C_AddOns.LoadAddOn("Blizzard_DebugTools")
 C_AddOns.LoadAddOn("LibDebug")
 ---@diagnostic disable-next-line: undefined-global
 if LibDebug then LibDebug() end
+--@end-debug@
 local addon --#Jeeves
 addon=LibStub("LibInit"):NewAddon(ns,me,'AceHook-3.0','AceEvent-3.0','AceTimer-3.0')
 local L=addon:GetLocale()
