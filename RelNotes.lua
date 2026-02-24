@@ -17,6 +17,9 @@ ones not your armor class.
 Note, I recommend OneChoice to improve you quest reward selection experience
 ]])
 self:HF_Paragraph('Release Notes')
+self:RelNotes(1,19,0,[[
+Toc: 12.0.1
+]])
 self:RelNotes(1,18,0,[[
 Toc: 11.2.7
 ]])
