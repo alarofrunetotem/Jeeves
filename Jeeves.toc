@@ -1,4 +1,4 @@
-## Interface: 120005
+## Interface: 120100, 120105
 ## Title: Jeeves
 ## IconTexture: Interface\Icons\inv_boastfulsquire_hd
 ## Category: Quests
